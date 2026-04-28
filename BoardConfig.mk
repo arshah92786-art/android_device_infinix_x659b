@@ -68,7 +68,8 @@ ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
   TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
   TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
   BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
-  # Remove the line that empties BOARD_INCLUDE_DTB_IN_BOOTIMG
+  # Set this to false because we are using the separate dtb.img file
+  BOARD_INCLUDE_DTB_IN_BOOTIMG := false
 endif
 
 # Partitions
@@ -87,6 +88,7 @@ BOARD_INFINIX_DYNAMIC_PARTITIONS_SIZE := 9122611200 # TODO: Fix hardcoded value
 
 # Platform
 TARGET_BOARD_PLATFORM := mt6768
+BOARD_USES_MTK_HARDWARE := true
 
 # Recovery
 TARGET_USERIMAGES_USE_EXT4 := true
