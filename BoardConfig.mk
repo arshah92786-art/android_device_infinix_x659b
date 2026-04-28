@@ -72,12 +72,6 @@ ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
 
   # In Header V3, the DTB must be passed as a specific argument
   BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
-endif
-  
-  # Tell the build system to copy the DTB to the staging directory
-  PRODUCT_COPY_FILES += $(TARGET_PREBUILT_DTB):dtb.img
-
-  BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
   
   # Ensure the build system doesn't try to look for source configs
   BOARD_INCLUDE_DTB_IN_BOOTIMG := false
