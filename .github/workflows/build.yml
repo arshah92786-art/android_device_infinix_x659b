@@ -1,11 +1,11 @@
 name: Recovery Build
 
 on:
-  workflow_dispatch: # This lets you start the build with a button click
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -13,18 +13,21 @@ jobs:
       - name: Install Build Tools
         run: |
           sudo apt update
-          sudo apt install -y bc bison build-essential curl flex g++-multilib gcc-multilib git gnupg gperf lib32ncurses-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python3 cpio libncurses5
+          sudo apt install -y bc bison build-essential curl flex g++-multilib gcc-multilib git gnupg gperf lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.1-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python3 cpio
 
-      - name: Set up Manifest
+      - name: Set up Repo Tool
         run: |
-          mkdir ~/bin
+          mkdir -p ~/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod a+x ~/bin/repo
-          export PATH=~/bin:$PATH
+          sudo cp ~/bin/repo /usr/bin/repo
+
+      - name: Set up Manifest and Sync
+        run: |
           mkdir ~/twrp
           cd ~/twrp
           repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
-          repo sync -j$(nproc --all) --force-sync
+          repo sync -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 
       - name: Add Your Device Tree
         run: |
@@ -34,8 +37,8 @@ jobs:
 
       - name: Build Recovery Image
         run: |
-          export PATH=~/bin:$PATH
           cd ~/twrp
+          export ALLOW_MISSING_DEPENDENCIES=true
           . build/envsetup.sh
-          lunch omni_Infinix-X659B-eng
+          lunch omni_Infinix-X659B-eng || lunch twrp_Infinix-X659B-eng
           mka recoveryimage
