@@ -13,7 +13,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, vendor/twrp/config/common.mk)
 
 # Inherit from Infinix-X659B device
-$(call inherit-product, device/infinix/Infinix-X659B/device.mk)
+$(call inherit-product, device/infinix/x659b/device.mk)
 
 PRODUCT_DEVICE := x659b
 PRODUCT_NAME := omni_x659b
