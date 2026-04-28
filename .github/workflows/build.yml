@@ -43,8 +43,9 @@ jobs:
       - name: Setup Device Tree
         run: |
           cd ~/twrp
-          mkdir -p device/infinix/Infinix-X659B
-          cp -rv $GITHUB_WORKSPACE/* device/infinix/Infinix-X659B/
+          # We are changing the folder name to lowercase 'x659b' to match your TARGET_DEVICE
+          mkdir -p device/infinix/x659b
+          cp -rv $GITHUB_WORKSPACE/* device/infinix/x659b/
 
       - name: Build Recovery
         run: |
