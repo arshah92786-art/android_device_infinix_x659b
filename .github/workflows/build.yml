@@ -9,15 +9,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Install Build Tools (Modern Version)
+      - name: Install Build Tools
         run: |
           sudo apt update
           sudo apt install -y bc bison build-essential curl flex g++-multilib gcc-multilib git gnupg gperf lib32ncurses-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python3 cpio
           
-          # Manually install the legacy ncurses library needed for Android builds
-          wget http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_6.2-0ubuntu2_amd64.deb
-          sudo apt install ./libncurses5_6.2-0ubuntu2_amd64.deb
+          # Manually grab the legacy library for MediaTek compatibility
+          wget http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_6.4-7ubuntu1_amd64.deb || wget http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_6.2-0ubuntu2_amd64.deb
+          sudo apt install ./libncurses5*.deb
 
       - name: Set up Repo Tool
         run: |
@@ -26,24 +28,24 @@ jobs:
           chmod a+x ~/bin/repo
           sudo cp ~/bin/repo /usr/bin/repo
 
-      - name: Set up Manifest and Sync
+      - name: Sync Minimal TWRP Manifest
         run: |
           mkdir ~/twrp
           cd ~/twrp
           repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
           repo sync -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 
-      - name: Add Your Device Tree
+      - name: Setup Device Tree
         run: |
           cd ~/twrp
           mkdir -p device/infinix/Infinix-X659B
-          cp -r $GITHUB_WORKSPACE/* device/infinix/Infinix-X659B/
+          cp -rv $GITHUB_WORKSPACE/* device/infinix/Infinix-X659B/
 
-      - name: Build Recovery Image
+      - name: Build Recovery
         run: |
           cd ~/twrp
           export ALLOW_MISSING_DEPENDENCIES=true
           . build/envsetup.sh
-          # Try both omni and twrp targets to be safe
+          # Trying different lunch combos for Infinix
           lunch omni_Infinix-X659B-eng || lunch twrp_Infinix-X659B-eng
           mka recoveryimage
