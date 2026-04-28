@@ -68,7 +68,7 @@ ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
   TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
   TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
   BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
-  # Set this to false because we are using the separate dtb.img file
+  # Ensure we don't try to build from source
   BOARD_INCLUDE_DTB_IN_BOOTIMG := false
 endif
 
