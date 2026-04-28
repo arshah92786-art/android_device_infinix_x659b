@@ -3,6 +3,9 @@ name: Recovery Build
 on:
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,16 +13,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          clean: false # This prevents the Exit Code 8 'dirty' error
+
+      - name: Fix Git Safe Directory
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
 
       - name: Install Build Tools
         run: |
           sudo apt update
           sudo apt install -y bc bison build-essential curl flex g++-multilib gcc-multilib git gnupg gperf lib32ncurses-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python3 cpio
           
-          # Manually grab the legacy library for MediaTek compatibility
-          wget http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_6.4-7ubuntu1_amd64.deb || wget http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_6.2-0ubuntu2_amd64.deb
-          sudo apt install ./libncurses5*.deb
+          # Download legacy ncurses for MediaTek compatibility
+          wget http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_6.4-7ubuntu1_amd64.deb
+          sudo apt install ./libncurses5_6.4-7ubuntu1_amd64.deb
 
       - name: Set up Repo Tool
         run: |
@@ -46,6 +53,5 @@ jobs:
           cd ~/twrp
           export ALLOW_MISSING_DEPENDENCIES=true
           . build/envsetup.sh
-          # Trying different lunch combos for Infinix
           lunch omni_Infinix-X659B-eng || lunch twrp_Infinix-X659B-eng
           mka recoveryimage
