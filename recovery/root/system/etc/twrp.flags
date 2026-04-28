@@ -1,0 +1,16 @@
+# Logical partitions
+/system         ext4    system                                     flags=display=system;logical;slotselect
+/vendor         ext4    vendor                                     flags=display=vendor;logical;slotselect
+/product        ext4    product                                    flags=display=product;logical;slotselect
+/system_ext     ext4    system_ext                                 flags=display=system_ext;logical;slotselect
+
+# Physical partitions
+/metadata       ext4    /dev/block/platform/bootdevice/by-name/md_udc      flags=display=metadata;backup=1;wrappedkey
+/data           f2fs    /dev/block/platform/bootdevice/by-name/userdata    flags=display=data
+/boot           emmc    /dev/block/platform/bootdevice/by-name/boot        flags=display=boot;slotselect
+/dtbo           emmc    /dev/block/platform/bootdevice/by-name/dtbo        flags=display=dtbo
+/vbmeta         emmc    /dev/block/platform/bootdevice/by-name/vbmeta      flags=display=vbmeta
+
+# Removable storage
+/external_sd    vfat    /dev/block/mmcblk1p1 /dev/block/mmcblk1            flags=display="MicroSD";storage;wipeui;removable
+/usb_otg        vfat    /dev/block/sda1 /dev/block/sda                     flags=display="USB-OTG";storage;wipeui;removable
