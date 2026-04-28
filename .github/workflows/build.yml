@@ -55,3 +55,10 @@ jobs:
           # Using the simplified name we just set up
           lunch omni_x659b-eng
           mka recoveryimage
+
+      - name: Upload Recovery Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: TWRP-Recovery-Infinix-X659B
+          path: /home/runner/twrp/out/target/product/x659b/recovery.img    
+      
