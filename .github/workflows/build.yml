@@ -47,20 +47,18 @@ jobs:
           mkdir -p device/infinix/x659b
           cp -rv $GITHUB_WORKSPACE/* device/infinix/x659b/
 
-      - name: Build Recovery
+      - name: Build Boot Image
         run: |
           cd ~/twrp
           export ALLOW_MISSING_DEPENDENCIES=true
           . build/envsetup.sh
-          # Using the simplified name we just set up
           lunch omni_x659b-eng
+          # Target bootimage since there is no recovery partition
           mka bootimage
 
-      - name: Upload Build Folder (Debug)
+      - name: Upload Build Folder
         uses: actions/upload-artifact@v4
         with:
-          name: Build-Output-Check
-          # This tells GitHub to grab everything in the output folder
-          # so we can see exactly what was created.
-          path: /home/runner/twrp/out/target/product/x659b/*.img    
+          name: TWRP-Boot-x659b
+          path: /home/runner/twrp/out/target/product/x659b/boot.img    
       
