@@ -51,6 +51,6 @@ jobs:
           cd ~/twrp
           export ALLOW_MISSING_DEPENDENCIES=true
           . build/envsetup.sh
-          # We are being very specific now
-          lunch omni_Infinix-X659B-eng
+          # Using the simplified name we just set up
+          lunch omni_x659b-eng
           mka recoveryimage
