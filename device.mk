@@ -27,3 +27,16 @@ PRODUCT_PACKAGES += \
     update_engine \
     update_verifier \
     update_engine_sideload
+
+# Dynamic Partitions
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+
+# User Interface
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/recovery/root/system/etc/twrp.flags:recovery/root/system/etc/twrp.flags
+
+# Touch and Graphics (MediaTek specific)
+PRODUCT_PACKAGES += \
+    libGLESv2 \
+    libEGL \
+    libGLESv1_CM
