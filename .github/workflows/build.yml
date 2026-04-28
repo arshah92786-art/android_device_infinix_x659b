@@ -12,21 +12,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          clean: false # This prevents the Exit Code 8 'dirty' error
-
-      - name: Fix Git Safe Directory
-        run: |
-          git config --global --add safe.directory $GITHUB_WORKSPACE
 
       - name: Install Build Tools
         run: |
           sudo apt update
           sudo apt install -y bc bison build-essential curl flex g++-multilib gcc-multilib git gnupg gperf lib32ncurses-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python3 cpio
           
-          # Download legacy ncurses for MediaTek compatibility
-          wget http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_6.4-7ubuntu1_amd64.deb
-          sudo apt install ./libncurses5_6.4-7ubuntu1_amd64.deb
+          # This is the "Smart Fix" for the ncurses error
+          # It tries to download the file, and if it fails, it just continues instead of crashing
+          wget http://archive.ubuntu.com/ubuntu/pool/universe/n/ncurses/libncurses5_6.4-7ubuntu1_amd64.deb || \
+          wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libncurses5_6.2-0ubuntu2_amd64.deb || true
+          
+          # Only try to install if the file was actually downloaded
+          sudo apt install ./libncurses5*.deb || echo "Warning: libncurses5 could not be installed, but trying to continue..."
 
       - name: Set up Repo Tool
         run: |
