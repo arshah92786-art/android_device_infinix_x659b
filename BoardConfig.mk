@@ -68,11 +68,12 @@ ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
   TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
   TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
   
-  # THIS LINE IS THE FIX:
-  PRODUCT_COPY_FILES += $(TARGET_PREBUILT_DTB):$(OUT)/dtb.img
+  # Tell the build system to copy the DTB to the staging directory
+  PRODUCT_COPY_FILES += $(TARGET_PREBUILT_DTB):dtb.img
 
   BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
-  # Ensure we don't try to build from source
+  
+  # Ensure the build system doesn't try to look for source configs
   BOARD_INCLUDE_DTB_IN_BOOTIMG := false
 endif
 
