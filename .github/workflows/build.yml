@@ -1,0 +1,41 @@
+name: Recovery Build
+
+on:
+  workflow_dispatch: # This lets you start the build with a button click
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Build Tools
+        run: |
+          sudo apt update
+          sudo apt install -y bc bison build-essential curl flex g++-multilib gcc-multilib git gnupg gperf lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.1-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python3 cpio
+
+      - name: Set up Manifest
+        run: |
+          mkdir ~/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
+          export PATH=~/bin:$PATH
+          mkdir ~/twrp
+          cd ~/twrp
+          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+          repo sync -j$(nproc --all) --force-sync
+
+      - name: Add Your Device Tree
+        run: |
+          cd ~/twrp
+          mkdir -p device/infinix/Infinix-X659B
+          cp -r $GITHUB_WORKSPACE/* device/infinix/Infinix-X659B/
+
+      - name: Build Recovery Image
+        run: |
+          export PATH=~/bin:$PATH
+          cd ~/twrp
+          . build/envsetup.sh
+          lunch omni_Infinix-X659B-eng
+          mka recoveryimage
