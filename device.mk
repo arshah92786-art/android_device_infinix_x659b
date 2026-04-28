@@ -40,3 +40,10 @@ PRODUCT_PACKAGES += \
     libGLESv2 \
     libEGL \
     libGLESv1_CM
+
+# TWRP Hardware-specific
+PRODUCT_SET_DEBUGFS_RESTRICTIONS := false
+
+# Inherit from omni_twres (This ensures TWRP resources are included)
+$(call inherit-product, vendor/omni/config/common.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
